@@ -1,46 +1,25 @@
-import cv2
+import os
 import glob
+import ffmpeg
+from datetime import datetime
 
-def comb_movie(movie_files,out_path):
-    
-    # 形式はmp4
-    fourcc = cv2.VideoWriter_fourcc('m','p','4','v')
+today = datetime.today().strftime("%Y-%m-%d")
 
-    # 動画情報の取得
-    movie = cv2.VideoCapture(movie_files[0])
-    fps = movie.get(cv2.CAP_PROP_FPS)
-    height = movie.get(cv2.CAP_PROP_FRAME_HEIGHT)
-    width = movie.get(cv2.CAP_PROP_FRAME_WIDTH)
+video_folder = os.path.join("video", today)
 
+mp4_files = glob.glob(os.path.join(video_folder, "*.mp4"))
 
-    # 出力先のファイルを開く
-    out = cv2.VideoWriter(out_path, int(fourcc), fps, (int(width), int(height)))
-        
-        
-    for movies in (movie_files):
-        print(movies)
-        # 動画ファイルの読み込み，引数はビデオファイルのパス
-        movie = cv2.VideoCapture(movies)
+input_videos = mp4_files
+output_video = f"{today}.mp4"  # 出力ファイル名
 
-        # 正常に動画ファイルを読み込めたか確認
-        if movie.isOpened() == True: 
-            # read():1コマ分のキャプチャ画像データを読み込む
-            ret, frame = movie.read() 
-        else:
-            ret = False
-        
-        while ret:
-            # 読み込んだフレームを書き込み
-            out.write(frame)
-            # 次のフレーム読み込み
-            ret, frame = movie.read()
+# 一時的なリストファイルを作成
+with open("file_list.txt", "w") as f:
+    for video in input_videos:
+        f.write(f"file '{video}'\n")
 
-# ディレクトリ内の動画をリストで取り出す
-files = sorted(glob.glob("./movie_dir/*.mp4"))
+# ffmpeg を実行（連結処理）
+ffmpeg.input("file_list.txt", format="concat", safe=0).output(output_video, c="copy").run()
 
-# 出力ファイル名
-out_path = "movie_out1.mp4"
+os.remove("file_list.txt")
 
-comb_movie(files,out_path)
-
-
+print("動画の結合が完了しました！")
