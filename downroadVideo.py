@@ -52,7 +52,7 @@ combine_if = input("結合しますか？(y/n): ")
 
 # ffmpeg を実行（連結処理）
 if combine_if == "y":
-    ffmpeg.input("file_list.txt", format="concat", safe=0).output(output_video, c="copy").run()
+    ffmpeg.input("file_list.txt", format="concat", safe=0).output(output_video).run()
     print("動画の結合が完了しました！")
 else:
     print("結合しませんでした。")

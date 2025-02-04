@@ -3,3 +3,4 @@
 *.pyc
 pycache__/
 /video
+*.mp4
