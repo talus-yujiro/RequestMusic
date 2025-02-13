@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>YouTube 動画のダウンロードと結合</title>
+</head>
+<body>
+    <h1>YouTube 動画のダウンロードと結合</h1>
+    <label for="video-url">動画の URL を入力してください:</label>
+    <input type="text" id="video-url" placeholder="YouTube の URL">
+    <button id="download-btn">ダウンロード開始</button>
+
+    <p id="message"></p>
+    <a id="download-link" href="#" style="display: none;">動画のダウンロードリンク</a>
+
+    <script>
+        document.getElementById("download-btn").addEventListener("click", function() {
+            const url = document.getElementById("video-url").value;
+            const messageElement = document.getElementById("message");
+            const downloadLinkElement = document.getElementById("download-link");
+
+            if (!url) {
+                messageElement.textContent = "URLを入力してください。";
+                return;
+            }
+
+            fetch(`/merge?url=${encodeURIComponent(url)}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        messageElement.textContent = "動画と音声の結合が完了しました！";
+                        downloadLinkElement.href = data.downloadLink;
+                        downloadLinkElement.style.display = "block";
+                    } else {
+                        messageElement.textContent = "エラーが発生しました: " + data.error;
+                    }
+                })
+                .catch(error => {
+                    messageElement.textContent = "エラーが発生しました。";
+                    console.error(error);
+                });
+        });
+    </script>
+</body>
+</html>
+

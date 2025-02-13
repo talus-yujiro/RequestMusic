@@ -4,3 +4,5 @@
 pycache__/
 /video
 *.mp4
+/latest/node_modules
+/latest/*.json
