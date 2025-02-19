@@ -1,13 +1,17 @@
 const fs = require("fs");
 const { exec } = require("child_process");
 const path = require("path");
-const os = require("os");
 
-// ダウンロードフォルダを取得
-const downloadFolder = "/mnt/chromeos/MyFiles/Downloads";
+// ダウンロードフォルダをスクリプトと同じ階層に設定
+const downloadFolder = path.join(__dirname, "downloads");
+
+// ダウンロードフォルダが存在しない場合は作成
+if (!fs.existsSync(downloadFolder)) {
+    fs.mkdirSync(downloadFolder);
+}
 
 // `links.txt` からYouTube動画のリンクを取得
-const linksFile = "links.txt";
+const linksFile = path.join(__dirname, "links.txt");
 
 fs.readFile(linksFile, "utf8", (err, data) => {
     if (err) {
@@ -35,4 +39,3 @@ fs.readFile(linksFile, "utf8", (err, data) => {
         });
     });
 });
-
